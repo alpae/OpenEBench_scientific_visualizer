@@ -6,8 +6,8 @@ import { compute_classification } from "./classification";
 export function createChart (data,divid, classification_type, metric_x, metric_y, metrics_names, better, axis_limits){
 
   let margin = {top: Math.round($(window).height()* 0.0318), right:  Math.round($(window).width()* 0.0261), bottom: compute_chart_height(data), left:  Math.round($(window).width()* 0.0373)},
-    width = Math.round($(window).width()* 0.6818) - margin.left - margin.right,
-    height = Math.round($(window).height()* 0.87) - margin.top - margin.bottom;
+    width = Math.round($(window).width()* 0.818) - margin.left - margin.right,
+    height = Math.round($(window).height()* 0.95) - margin.top - margin.bottom;
 
   let min_x = d3.min(data, function(d) { return d.x; });
   let max_x = d3.max(data, function(d) { return d.x; });
@@ -227,7 +227,7 @@ export function createChart (data,divid, classification_type, metric_x, metric_y
     .attr("target", "_blank")
     .append("rect")  
     .attr("transform",
-          "translate(" + (Math.round($(window).width()* 0.6)) + " ," + 
+          "translate(" + (Math.round($(window).width()* 0.7)) + " ," +
           ( margin.top - (Math.round($(window).height()* 0.057))) + ")")
     .attr("height", Math.round($(window).height()* 0.0235))
     .attr("width", Math.round($(window).width()* 0.03))
@@ -239,7 +239,7 @@ export function createChart (data,divid, classification_type, metric_x, metric_y
     svg.append("image")
     .attr("id", divid + "_logo")
     .attr("transform",
-          "translate(" + (Math.round($(window).width()* 0.6)) + " ," + 
+          "translate(" + (Math.round($(window).width()* 0.7)) + " ," +
           ( margin.top - (Math.round($(window).height()* 0.063))) + ")")
   .attr('width', Math.round($(window).width()* 0.029))
   .attr('height', Math.round($(window).height()* 0.026))

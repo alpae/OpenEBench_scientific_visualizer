@@ -38,7 +38,7 @@ export function append_classifiers_list(divid){
         .attr("selected","disabled")
         .attr("data-toggle", "list_tooltip")
         .attr("data-container", "#tooltip_container") 
-        .text("NO CLASSIFICATION")
+        .text("No classification")
         
         select_list.append("option")
         .attr("class", "selection_option")
@@ -46,7 +46,7 @@ export function append_classifiers_list(divid){
         .attr("title", "Apply square quartiles classification method (based on the 0.5 quartile of the X and Y metrics)")
         .attr("data-toggle", "list_tooltip")
         .attr("data-container", "#tooltip_container") 
-        .text("SQUARE QUARTILES")
+        .text("Square quartiles")
   
         select_list.append("option")
         .attr("class", "selection_option")
@@ -54,7 +54,7 @@ export function append_classifiers_list(divid){
         .attr("title", "Apply diagonal quartiles classifcation method (based on the assignment of a score to each participant proceeding from its distance to the 'optimal performance' corner)")
         .attr("data-toggle", "list_tooltip")
         .attr("data-container", "#tooltip_container") 
-        .text("DIAGONAL QUARTILES")
+        .text("Diagonal quartiles")
 
         select_list.append("option")
         .attr("class", "selection_option")
@@ -62,5 +62,5 @@ export function append_classifiers_list(divid){
         .attr("title", "Apply K-Means clustering method (group the participants using the K-means clustering algorithm and sort the clusters according to the performance)")
         .attr("data-toggle", "list_tooltip")
         .attr("data-container", "#tooltip_container") 
-        .text("K-MEANS CLUSTERING")
+        .text("K-means clustering")
 };

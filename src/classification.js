@@ -8,9 +8,11 @@ export function compute_classification(data, svg, xScale, yScale, div, width, he
 
   let transform_to_table; //this variable is set to true if there are table elements with the corresponden divid in the html file
   // every time a new classification is compute the previous results table is deleted (if it exists)
-  if (document.getElementById(divid + "_table") != null) {
-    document.getElementById(divid + "_table").innerHTML = '';
+  let tablediv = document.getElementById((divid + "_table"));
+  if (tablediv != null) {
+    tablediv.innerHTML = '';
     transform_to_table = true;
+    tablediv.style.display = null;
   };
 
   // append optimization arrow
@@ -29,6 +31,7 @@ export function compute_classification(data, svg, xScale, yScale, div, width, he
     draw_pareto(data, svg, xScale, yScale, removed_tools,divid, better);
     get_clusters(data, svg, xScale, yScale, div, width, height, removed_tools, better,divid, transform_to_table, legend_color_palette);
   } else {
+    tablediv.style.display = "none";
     draw_pareto(data, svg, xScale, yScale, removed_tools,divid, better);
   }
   
