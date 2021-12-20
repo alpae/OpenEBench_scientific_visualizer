@@ -23,18 +23,6 @@ div.benchmark_tooltip {
 }
 
 
-/* .benchmark_tooltip:after {
-      content: " ";
-      position: absolute;
-      top: 50%;
-      right: 100%;
-      margin-top: -10px;
-      border-width: 10px;
-      border-style: solid;
-      border-color: transparent transparent transparent transparent;
-      
-  } */
-
 .plot-bg {
     fill: #f8f8f8;
     stroke: black;
@@ -51,25 +39,6 @@ div.benchmark_tooltip {
 .bench_grid {
     stroke-opacity: 0.1;
     stroke-dasharray: 7, 5;
-}
-
-.classificators_list {
-    order: 1;
-    background-color: #0a58a2;
-    border-radius: 8px;
-    color: #fff;
-    font-size: 1vw;
-    /* padding-left: 25px;
-    padding-right: 25px; */
-    text-align: center;
-    width: 20vw;
-    float: left;
-    height: 1.5vw;
-
-}
-
-.classificators_list:hover {
-    background-color: #b3cde0;
 }
 
 .benchmarkingTable_scatter td {
@@ -109,6 +78,7 @@ div.benchmark_tooltip {
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
+    flex-direction: column;
 }
 
 .benchmarkingSVG {
@@ -150,43 +120,15 @@ div.benchmark_tooltip {
     fill: #0000ee;
 }
 
-.toggle_axis_button {
-    background-color: #0a58a2;
-    text-align: center;
-    border-radius: 8px;
-    color: #fff;
-    cursor: pointer;
-    height: 1.5vw;
-    font-size: 1vw;
-    width: 10vw;
-    display: inline-flex;
-    align-items: center; 
-    justify-content: center; 
-}
-
-.download_button {
-    background-color: #0a58a2;
-    border-radius: 8px;
-    color: #fff;
-    font-size: 1vw;
-    text-align: center;
-    width: 10vw;
-    height: 1.5vw;
-}
 
 .download_div {
     order: 3;
-    padding-left: .5vw;
-    padding-top: 1vh;
 }
 
 .toggle_div {
     order: 2;
-    padding-left: .5vw;
-    padding-top: .8vh;
 }
 
 .classif_list_div{
     order: 1;
-    padding-top: 1vh;
 }

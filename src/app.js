@@ -255,7 +255,9 @@ function add_buttons(divid, metric_x, metric_y, better, data, json_download) {
     default_zoom = (default_zoom && (default_zoom === 'on' || default_zoom === 'true'));
 
     //add button which allows to toogle between reset view & out
-    d3.select('#' + divid + '_buttons_container').append("div").attr("class", "toggle_div").append("button")
+    d3.select('#' + divid + '_buttons_container').append("div").attr("class", "toggle_div")
+        .append("label").lower().attr("for", divid+"axis_button").text("Axes scale: ")
+        .append("button")
         .attr("class", "toggle_axis_button")
         .attr("id", divid + "axis_button")
         .attr("name", default_zoom ? "reset view" : "optimal view")
@@ -278,7 +280,9 @@ function add_buttons(divid, metric_x, metric_y, better, data, json_download) {
         });
 
     // add options button to download chart in pdf or png format
-    let select_list = d3.select("#" + divid + "_buttons_container").append("div").attr("class", "download_div").append("form").append("select")
+    let select_list = d3.select("#" + divid + "_buttons_container").append("div").attr("class", "download_div").append("form")
+        .append("label").attr("for", divid+"_download_button").text("Download: ")
+        .append("select")
         .attr("class", "download_button")
         .attr("id", divid + "_download_button")
         .on('change', function(d) {
@@ -299,14 +303,14 @@ function add_buttons(divid, metric_x, metric_y, better, data, json_download) {
 
         })
         .append("optgroup")
-        .attr("label", "Select a format: ")
+        .attr("label", "Select a format: ");
 
 
     select_list.append("option")
         .attr("value", "Download")
         .attr("disabled", "selected")
         .text("Download")
-        .attr("style", "display:none")
+        .attr("style", "display: none");
 
     select_list.append("option")
     .attr("class", "selection_option")
