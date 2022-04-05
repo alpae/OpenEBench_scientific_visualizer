@@ -168,8 +168,10 @@ export function createChart (data,divid, classification_type, metric_x, metric_y
    // setup fill color
   let cValue_func = function(d) {
     return d.toolname;
-  },
-  color_func = d3.scaleOrdinal(d3.schemeSet1.concat(d3.schemeSet3).concat(d3.schemeSet2));
+  };
+  let scheme_data = d3.schemeSet1.concat(d3.schemeSet3).concat(d3.schemeSet2);
+  let t=scheme_data[10]; scheme_data[10] = scheme_data[23]; scheme_data[23] = t;
+  let color_func = d3.scaleOrdinal(scheme_data);
 
     // get object with tools and colors:
     var legend_color_palette = {};
