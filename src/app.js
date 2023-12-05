@@ -7,6 +7,10 @@ import { compute_chart_height } from "./scatter_plot"
 import html2canvas from 'html2canvas'
 import * as jsPDF from 'jspdf'
 import d3_save_svg from 'd3-save-svg';
+import * as d3 from "d3";
+import * as JQuery from "jquery";
+const $ = JQuery.default;
+window.d3 = d3;
 
 // ./node_modules/.bin/webpack-cli src/app.js --output=build/build.js -d -w
 
@@ -170,9 +174,11 @@ function get_data(url, json_query, dataId, divid) {
                     // get optimization point
                     if (result[0].datalink.inline_data.visualization.optimization == "bottom-right") {
                         better[divid] = "bottom-right";
-                    } else {
+                    } else if(result[0].datalink.inline_data.visualization.optimization == "top-right"){
                         better[divid] = "top-right";
-                    };
+                    } else if(result[0].datalink.inline_data.visualization.optimization == "top-left"){
+                        better[divid] = "top-left";
+                    }
                     let metric_x = result[0].datalink.inline_data.visualization.x_axis;
                     let metric_y = result[0].datalink.inline_data.visualization.y_axis;
                     // append those metrics as div attributes, so that they cna be used later
