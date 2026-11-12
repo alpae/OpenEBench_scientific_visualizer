@@ -1,5 +1,5 @@
-import * as JQuery from "jquery";
-const $ = JQuery.default;
+import { toolKey } from "./utils";
+import * as d3 from "d3";
 
 export function fill_in_table (divid, data, all_participants, removed_tools){
 
@@ -14,7 +14,7 @@ export function fill_in_table (divid, data, all_participants, removed_tools){
     row.insertCell(0).innerHTML = element.toolname;
     //if the participant is not hidden the 2nd column is filled with the corresponding quartile
     // if not it is filled with --
-    if ($.inArray(element.toolname.replace(/[\. ()+/_]/g, "-"), removed_tools) == -1) {
+    if (!removed_tools.includes(toolKey(element.toolname))) {
       // var quartile;
       let obj = data.find(o => o.toolname.replace(/[\. ()+/_]/g, "-") === element.toolname.replace(/[\. ()+/_]/g, "-"));
       row.insertCell(1).innerHTML = obj.quartile;
@@ -41,11 +41,9 @@ export function fill_in_table (divid, data, all_participants, removed_tools){
       let legend_rect = (divid+"___leg_rect"+ ID.split("___cell")[1]);
 
       if (d3.select(this).style("opacity") == 1 || d3.select(this).style("opacity") == 0.5){
-        $(this).css('opacity', 0.7);
-        $(this).closest("tr").css('opacity', 0.7);
+        set_cell_and_row_opacity(this, 0.7);
       } else {
-        $(this).css('opacity', 1);
-        $(this).closest("tr").css('opacity', 1);
+        set_cell_and_row_opacity(this, 1);
       };
 
     });
@@ -57,11 +55,9 @@ export function fill_in_table (divid, data, all_participants, removed_tools){
       let legend_rect = (divid+"___leg_rect"+ ID.split("___cell")[1]);
 
       if (d3.select("#" + legend_rect).style("opacity") == 0.2 || d3.select("#" + legend_rect).style("opacity") == 0.5){
-        $(this).css('opacity', 0.5);
-        $(this).closest("tr").css('opacity', 0.5);
+        set_cell_and_row_opacity(this, 0.5);
       } else {
-        $(this).css('opacity', 1);
-        $(this).closest("tr").css('opacity', 1);
+        set_cell_and_row_opacity(this, 1);
       };
 
     });
@@ -74,32 +70,38 @@ export function set_cell_colors(divid, legend_color_palette, removed_tools){
 
   var tools = Object.keys(legend_color_palette);
 
-  var cell = $("#" + divid + "_table td"); 
+  var cells = document.querySelectorAll("#" + divid + "_table td");
 
-  cell.each(function() { //loop through all td elements ie the cells
+  cells.forEach(function(cell) {
 
-    var cell_value = $(this).html(); //get the value
-    if (cell_value == 1) { //if then for if value is 1
-      $(this).css({'background' : '#238b45'});   // changes td to red.
+    var cell_value = cell.innerHTML;
+    if (cell_value == 1) {
+      cell.style.background = '#238b45';
     } else if (cell_value == 2) {
-      $(this).css({'background' : '#74c476'}); 
+      cell.style.background = '#74c476';
     } else if (cell_value == 3) {
-      $(this).css({'background' : '#bae4b3'}); 
+      cell.style.background = '#bae4b3';
     } else if (cell_value == 4) {
-      $(this).css({'background' : '#edf8e9'}); 
+      cell.style.background = '#edf8e9';
     } else if (cell_value == "--") {
-      $(this).css({'background' : '#f0f0f5'}); 
-    } else if ($.inArray(cell_value, tools) > -1 && $.inArray(cell_value.replace(/[\. ()+/_]/g, "-"), removed_tools) == -1) {
-      $(this).css({'background' : 'linear-gradient(to left, white 92%, ' + legend_color_palette[cell_value] + ' 8%)'});
-    } else if ($.inArray(cell_value.replace(/[\. ()+/_]/g, "-"), removed_tools) > -1) {
-      $(this).css({ 'background' : 'linear-gradient(to left, white 92%, ' + legend_color_palette[cell_value] + ' 8%)', 'opacity': 0.5});
-      $(this).closest("tr").css('opacity', 0.5);
+      cell.style.background = '#f0f0f5';
+    } else if (tools.includes(cell_value) && !removed_tools.includes(toolKey(cell_value))) {
+      cell.style.background = 'linear-gradient(to left, white 92%, ' + legend_color_palette[cell_value] + ' 8%)';
+    } else if (removed_tools.includes(toolKey(cell_value))) {
+      cell.style.background = 'linear-gradient(to left, white 92%, ' + legend_color_palette[cell_value] + ' 8%)';
+      set_cell_and_row_opacity(cell, 0.5);
     } else {
-      $(this).css({'background' : '#FFFFFF'});
+      cell.style.background = '#FFFFFF';
     };
-
-    // lighten(' + legend_color_palette[cell_value] + ', 50%)
 
   });
 
 };
+
+function set_cell_and_row_opacity(cell, opacity) {
+  cell.style.opacity = opacity;
+  const row = cell.closest("tr");
+  if (row) {
+    row.style.opacity = opacity;
+  }
+}

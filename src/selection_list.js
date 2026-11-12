@@ -1,3 +1,4 @@
+import * as d3 from "d3";
 import { onQuartileChange } from "./app"
 import { better } from "./app"
 
@@ -22,7 +23,7 @@ export function append_classifiers_list(divid){
         .append("select")
         .attr("class","classificators_list")
         .attr("id",divid + "_dropdown_list")
-        .on('change', function(d) {
+        .on('change', function() {
           let active_chart = document.getElementById(this.options[this.selectedIndex].id.split("__")[0])
           let metric_x = active_chart.getAttribute('metric_x');
           let metric_y = active_chart.getAttribute('metric_y');

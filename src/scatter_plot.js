@@ -1,14 +1,14 @@
+import * as d3 from "d3";
+import { viewportWidth, viewportHeight } from "./utils";
 import { append_dots_errobars } from './chart_coordinates'
 import { draw_legend } from "./legend";;
 import { compute_classification } from "./classification";
-import * as JQuery from "jquery";
-const $ = JQuery.default;
 
 export function createChart (data,divid, classification_type, metric_x, metric_y, metrics_names, better, axis_limits){
 
-  let margin = {top: Math.round($(window).height()* 0.0318), right:  Math.round($(window).width()* 0.0261), bottom: compute_chart_height(data), left:  Math.round($(window).width()* 0.0373)},
-    width = Math.round($(window).width()* 0.818) - margin.left - margin.right,
-    height = Math.round($(window).height()* 0.95) - margin.top - margin.bottom;
+  let margin = {top: Math.round(viewportHeight()* 0.0318), right:  Math.round(viewportWidth()* 0.0261), bottom: compute_chart_height(data), left:  Math.round(viewportWidth()* 0.0373)},
+    width = Math.round(viewportWidth()* 0.818) - margin.left - margin.right,
+    height = Math.round(viewportHeight()* 0.95) - margin.top - margin.bottom;
 
   let min_x = d3.min(data, function(d) { return d.x; });
   let max_x = d3.max(data, function(d) { return d.x; });
@@ -93,7 +93,7 @@ export function createChart (data,divid, classification_type, metric_x, metric_y
   svg.append("text")             
   .attr("transform",
         "translate(" + (width/2) + " ," + 
-                       (height + margin.top + (Math.round($(window).height()* 0.0347))) + ")")
+                       (height + margin.top + (Math.round(viewportHeight()* 0.0347))) + ")")
   .style("text-anchor", "middle")
   .style("font-weight", "bold")
   .style("font-size", ".95vw")
@@ -113,9 +113,9 @@ export function createChart (data,divid, classification_type, metric_x, metric_y
 
   svg.append("line")
   .attr("x1", 0)
-  .attr("y1", height + margin.top + (Math.round($(window).height()* 0.0347)) )
-  .attr("x2", Math.round($(window).width()* 0.02083))
-  .attr("y2", height + margin.top + (Math.round($(window).height()* 0.0347)) )
+  .attr("y1", height + margin.top + (Math.round(viewportHeight()* 0.0347)) )
+  .attr("x2", Math.round(viewportWidth()* 0.02083))
+  .attr("y2", height + margin.top + (Math.round(viewportHeight()* 0.0347)) )
 
   .attr("stroke", "grey")
   .attr("stroke-width",2)
@@ -124,8 +124,8 @@ export function createChart (data,divid, classification_type, metric_x, metric_y
   
   svg.append("text")             
   .attr("transform",
-        "translate(" + (Math.round($(window).width()* 0.05208)) + " ," + 
-                       (height + margin.top + (Math.round($(window).height()* 0.0347)) + 5) + ")")
+        "translate(" + (Math.round(viewportWidth()* 0.05208)) + " ," + 
+                       (height + margin.top + (Math.round(viewportHeight()* 0.0347)) + 5) + ")")
   .style("text-anchor", "middle")
   // .style("font-weight", "bold")
   .style("font-size", ".75vw")
@@ -230,10 +230,10 @@ export function createChart (data,divid, classification_type, metric_x, metric_y
     .attr("target", "_blank")
     .append("rect")  
     .attr("transform",
-          "translate(" + (Math.round($(window).width()* 0.7)) + " ," +
-          ( margin.top - (Math.round($(window).height()* 0.057))) + ")")
-    .attr("height", Math.round($(window).height()* 0.0235))
-    .attr("width", Math.round($(window).width()* 0.03))
+          "translate(" + (Math.round(viewportWidth()* 0.7)) + " ," +
+          ( margin.top - (Math.round(viewportHeight()* 0.057))) + ")")
+    .attr("height", Math.round(viewportHeight()* 0.0235))
+    .attr("width", Math.round(viewportWidth()* 0.03))
     .style("fill", "white")
     .attr("rx", 10)
     .attr("ry", 10);
@@ -242,21 +242,21 @@ export function createChart (data,divid, classification_type, metric_x, metric_y
     svg.append("image")
     .attr("id", divid + "_logo")
     .attr("transform",
-          "translate(" + (Math.round($(window).width()* 0.7)) + " ," +
-          ( margin.top - (Math.round($(window).height()* 0.063))) + ")")
-  .attr('width', Math.round($(window).width()* 0.029))
-  .attr('height', Math.round($(window).height()* 0.026))
+          "translate(" + (Math.round(viewportWidth()* 0.7)) + " ," +
+          ( margin.top - (Math.round(viewportHeight()* 0.063))) + ")")
+  .attr('width', Math.round(viewportWidth()* 0.029))
+  .attr('height', Math.round(viewportHeight()* 0.026))
   .attr("xlink:href", logo_uri)
   .style("pointer-events", "none");
 // svg.append("text") 
     // .attr("class", "OEB_text_link")   
     // .style("pointer-events", "none")         
     // // .attr("transform",
-    // //       "translate(" + (Math.round($(window).width()* 0.55)) + " ," + 
-    // //       (height + margin.top + (Math.round($(window).height()* 0.0347)) + 5) + ")")
+    // //       "translate(" + (Math.round(viewportWidth()* 0.55)) + " ," + 
+    // //       (height + margin.top + (Math.round(viewportHeight()* 0.0347)) + 5) + ")")
     // .attr("transform",
-    //       "translate(" + (Math.round($(window).width()* 0.55)) + " ," + 
-    //       ( margin.top - (Math.round($(window).height()* 0.04))) + ")")
+    //       "translate(" + (Math.round(viewportWidth()* 0.55)) + " ," + 
+    //       ( margin.top - (Math.round(viewportHeight()* 0.04))) + ")")
     // .style("text-anchor", "middle")
     // .style("font-style", "italic")
     // .style("font-size", ".75vw")

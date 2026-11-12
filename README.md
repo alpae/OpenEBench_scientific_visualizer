@@ -71,15 +71,14 @@ Install dependencies from package.json :
 npm install 
 ```
 
-Export node moodules :
+Build with webpack (Node.js >= 20):
 ```
-export PATH="${PWD}/node_modules/.bin/:$PATH"
+npm run prod   # minified build/build.js
+npm run dev    # development build, rebuilds on changes
 ```
-Compile with webpack and visualize sample results in your localhost :
-```
-./node_modules/.bin/webpack-cli src/app.js --output=build/build.js -d -w
-```
-Add JS cdn for D3 and jquery and the build file which you can download from build/build.js and tag it into your html. You can then call the `load_scatter_visualization()` function.  
+`build/build.js` is self-contained (d3, html2canvas and jsPDF are bundled; jQuery is no longer used),
+so only the build file needs to be included in your html. The charts are drawn automatically on page
+load; `load_scatter_visualization()` can be called to draw them again.
 
 The HTML file should look like [this](./index.html)
 

@@ -1,18 +1,19 @@
+import { viewportWidth, viewportHeight } from "./utils";
 import './app.css';
-import { createApolloFetch } from 'apollo-fetch';
 import { append_classifiers_list } from "./selection_list";
 import { createChart } from "./scatter_plot"
 import { add_oeb_credits } from "./scatter_plot"
 import { compute_chart_height } from "./scatter_plot"
 import html2canvas from 'html2canvas'
-import * as jsPDF from 'jspdf'
-import d3_save_svg from 'd3-save-svg';
+import { jsPDF } from 'jspdf'
+import { save as save_svg } from 'd3-save-svg';
 import * as d3 from "d3";
-import * as JQuery from "jquery";
-const $ = JQuery.default;
-window.d3 = d3;
+// d3-transition patches selection.prototype.transition as a side effect; import it explicitly,
+// otherwise tree shaking drops it (d3 is marked side-effect free)
+import "d3-transition";
+import { isEmptyElement } from "./utils";
 
-// ./node_modules/.bin/webpack-cli src/app.js --output=build/build.js -d -w
+// build with `npm run prod` (or `npm run dev` to watch)
 
 
 let MAIN_DATA = {};
@@ -40,11 +41,11 @@ function load_scatter_visualization() {
         // ***************************
         // define base url - production or development --- DEPCRECATED
         //check for mode by default it is production if no param is given
-        var mode = $(y).data("mode") ? $(y).data("mode") : "openebench"
+        var mode = y.dataset.mode ? y.dataset.mode : "openebench"
         let base_url = "https://" + mode + ".bsc.es/";
         // **************************
 
-        const api_url = $(y).data("api-url")
+        const api_url = y.dataset.apiUrl
         let url = api_url ? api_url : base_url + "sciapi/graphql"; //downward compatibility
 
         // get benchmarking event id
@@ -92,8 +93,12 @@ function load_scatter_visualization() {
         //check the transformation to table attribute and append table to html
         if (y.getAttribute('toTable') == "true") {
             let table_id = divid + "_table";
-            var input = $('<br><br><table id="' + table_id + '" data-id="' + dataId + '" class="benchmarkingTable_scatter"></table>');
-            $("#" + divid + "flex-container").append(input);
+            let table = document.createElement("table");
+            table.id = table_id;
+            table.dataset.id = dataId;
+            table.className = "benchmarkingTable_scatter";
+            document.getElementById(divid + "flex-container").append(
+                document.createElement("br"), document.createElement("br"), table);
         };
 
         i++;
@@ -105,17 +110,31 @@ function load_scatter_visualization() {
 
 
 
+// minimal replacement for apollo-fetch: POST a GraphQL query, resolve with the parsed JSON response
+function graphql_client(url) {
+    return function({ query, variables }) {
+        return fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Accept": "application/json" },
+            body: JSON.stringify({ query: query, variables: variables || {} }),
+        }).then(res => {
+            if (!res.ok) {
+                throw new Error(`GraphQL request to ${url} failed: ${res.status} ${res.statusText}`);
+            }
+            return res.json();
+        });
+    };
+}
+
 function get_data(url, json_query, dataId, divid) {
 
     try {
 
-        const fetch = createApolloFetch({
-            uri: url,
-        });
+        const query_api = graphql_client(url);
 
         let vars = { dataset_id: dataId };
 
-        fetch({
+        query_api({
             query: json_query,
             variables: vars,
         }).then(res => {
@@ -134,7 +153,7 @@ function get_data(url, json_query, dataId, divid) {
             } else {
 
                 // get the names of the tools that are present in the community
-                const fetchData = () => fetch({
+                const fetchData = () => query_api({
                     query: `query getMetrics{
                         getMetrics {
                           _id
@@ -165,10 +184,12 @@ function get_data(url, json_query, dataId, divid) {
                     });
 
                     // parsing GraphQL wrapped JSON Object
-                    try {
-                      result[0].datalink.inline_data = JSON.parse(result[0].datalink.inline_data);
-                    } catch (err) {
-                        console.warn (err);
+                    if (typeof result[0].datalink.inline_data === "string") {
+                        try {
+                            result[0].datalink.inline_data = JSON.parse(result[0].datalink.inline_data);
+                        } catch (err) {
+                            console.warn(err);
+                        }
                     }
 
                     // get optimization point
@@ -189,6 +210,8 @@ function get_data(url, json_query, dataId, divid) {
                 });
 
             };
+        }).catch(err => {
+            console.error(`Cannot load data for ${dataId}: ${err}`);
         });
 
     } catch (err) {
@@ -274,7 +297,7 @@ function add_buttons(divid, metric_x, metric_y, better, data, json_download) {
         .attr("id", divid + "axis_button")
         .attr("name", default_zoom ? "reset view" : "optimal view")
         .text(default_zoom ? "reset view" : "optimal view")
-        .on('click', function(d) {
+        .on('click', function() {
             if (this.name == "optimal view") {
                 d3.select(this).text("reset view");
                 this.name = "reset view"
@@ -297,11 +320,11 @@ function add_buttons(divid, metric_x, metric_y, better, data, json_download) {
         .append("select")
         .attr("class", "download_button")
         .attr("id", divid + "_download_button")
-        .on('change', function(d) {
+        .on('change', function() {
 
             // add the oeb logo, for download, which will be removed after the download function is completed
             if (window.location.href.toLocaleLowerCase().includes("openebench") == true ){
-                let margin = {top: Math.round($(window).height()* 0.0318), right:  Math.round($(window).width()* 0.0261), bottom: compute_chart_height(data), left:  Math.round($(window).width()* 0.0373)}
+                let margin = {top: Math.round(viewportHeight()* 0.0318), right:  Math.round(viewportWidth()* 0.0261), bottom: compute_chart_height(data), left:  Math.round(viewportWidth()* 0.0373)}
                 add_oeb_credits(divid, d3.select('#' + divid +"_g_svg"), margin);
               }
 
@@ -359,7 +382,7 @@ function add_buttons(divid, metric_x, metric_y, better, data, json_download) {
 function download_file(format, id, json_download) {
 
     var download_id;
-    if ($("#" + id + "_table").is(':empty')) {
+    if (isEmptyElement(id + "_table")) {
         download_id = id + "_svg_container"
     } else {
         download_id = id + "flex-container"
@@ -405,7 +428,7 @@ function saveAsPDF(id, uri, filename) {
     })
     let width;
     let height = doc.internal.pageSize.getHeight();
-    if ($("#" + id + "_table").is(':empty')) {
+    if (isEmptyElement(id + "_table")) {
         width = doc.internal.pageSize.getWidth();
     } else {
         width = doc.internal.pageSize.getWidth() + doc.internal.pageSize.getWidth() * 0.2126; // this value might change when it is used as a widget in a different website (oeb - 0.02)
@@ -445,7 +468,7 @@ function saveAsSVG(id) {
     var download_id = "svg_" + id;
     var name = 'benchmarking_chart_' + id;
 
-    d3_save_svg.save(d3.select('#' + download_id).node(), { filename: name });
+    save_svg(d3.select('#' + download_id).node(), { filename: name });
 }
 
 function onQuartileChange(ID, metric_x, metric_y, better, axis_limit = "auto") {

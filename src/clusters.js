@@ -1,5 +1,5 @@
 import *  as clusterMaker from 'clusters';
-import * as d3Polygon from "d3-polygon";
+import { polygonHull } from "d3";
 import { remove_hidden_tools} from "./remove_tools";
 import { fill_in_table, set_cell_colors } from "./table"
 
@@ -109,7 +109,7 @@ function print_clusters(svg, divid, xScale, yScale, sorted_results){
        .style("opacity", 0.4)
     });
 
-    var hull = d3Polygon.polygonHull(poly);
+    var hull = polygonHull(poly);
 
     arrayOfPolygons.push({"points": hull});
 

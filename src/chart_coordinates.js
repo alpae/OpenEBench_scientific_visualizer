@@ -1,5 +1,5 @@
-import * as JQuery from "jquery";
-const $ = JQuery.default;
+import * as d3 from "d3";
+import { viewportWidth, viewportHeight } from "./utils";
 
 export function append_dots_errobars (svg, data, xScale, yScale, div, cValue, color,divid, metric_x, metric_y, metrics_names){
 
@@ -146,7 +146,7 @@ export function append_dots_errobars (svg, data, xScale, yScale, div, cValue, co
             .domain(data.map(d => d.toolname))
             .range(Array(Math.ceil(data.length/7)).fill([d3.symbolCircle, d3.symbolCross, d3.symbolDiamond, d3.symbolSquare, d3.symbolStar, d3.symbolTriangle, d3.symbolWye]).flat());
 
-    dots.attr("d", symbol.type(function(d){return shapeScale(d.toolname)}).size(Math.round($(window).height()* 0.2)))
+    dots.attr("d", symbol.type(function(d){return shapeScale(d.toolname)}).size(Math.round(viewportHeight()* 0.2)))
       .attr("id", function (d) {  return divid+"___"+d.toolname.replace(/[\. ()+/-]/g, "_");})
       .attr("class","line")
       .attr('transform',function(d){ return "translate("+xScale(d.x)+","+yScale(d.y)+")"; })
@@ -154,7 +154,7 @@ export function append_dots_errobars (svg, data, xScale, yScale, div, cValue, co
       .style("fill", function(d) {
         return color(cValue(d));
       })
-      .on("mouseover", function(d) {
+      .on("mouseover", function(event, d) {
         // show tooltip only if the tool is visible
         let ID = divid+"___"+d.toolname.replace(/[\. ()+/-]/g, "_");
         if (metric_x.startsWith("OEBM") == true){
@@ -177,11 +177,11 @@ export function append_dots_errobars (svg, data, xScale, yScale, div, cValue, co
               .style("display","block")		
               .style("opacity", .9);		
           div.html("<b>" + d.toolname + "</b><br/>"  + txt_x + ": " + formatComma(d.x) + "<br/>"  + txt_y + ": " + formatDecimal(d.y))	
-              .style("left", (d3.event.pageX) + "px")		
-              .style("top", (d3.event.pageY) + "px");
+              .style("left", (event.pageX) + "px")		
+              .style("top", (event.pageY) + "px");
         }
       })					
-      .on("mouseout", function(d) {		
+      .on("mouseout", function(event, d) {		
         div.transition()		
           .duration(1500)
           .style("display","none")		
