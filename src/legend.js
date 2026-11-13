@@ -1,7 +1,7 @@
+import * as d3 from "d3";
+import { viewportWidth, viewportHeight } from "./utils";
 import { compute_classification } from "./classification";
 import { better } from "./app"
-import * as JQuery from "jquery";
-const $ = JQuery.default;
 
 export function draw_legend (data, svg, xScale, yScale, div, width, height, removed_tools, color, color_domain, divid,classification_type, legend_color_palette) {
   
@@ -19,27 +19,27 @@ export function draw_legend (data, svg, xScale, yScale, div, width, height, remo
       .data(color_domain)
       .enter().append("g")
       .attr("class", "legend")
-      .attr("transform", function(d, i) { return "translate(" + (-width+i%n*(Math.round($(window).width()* 0.16))) + "," + (height + (Math.round($(window).height()* 0.0862962)) + Math.floor(i/n) * (Math.round($(window).height()* 0.0251481))) + ")"; });
+      .attr("transform", function(d, i) { return "translate(" + (-width+i%n*(Math.round(viewportWidth()* 0.16))) + "," + (height + (Math.round(viewportHeight()* 0.0862962)) + Math.floor(i/n) * (Math.round(viewportHeight()* 0.0251481))) + ")"; });
 
       legend.append("path")
       .style("fill", color)
-        .attr("d", symbol.type(function(d){return shapeScale(d)}).size(Math.round($(window).height()* 0.22)))
-        .attr("transform", function(d, i) { return "translate(" + (width+25+i%n*(Math.round($(window).width()* 0.0002))) + "," + (Math.round($(window).height()* 0.01)) +  ")"; })
+        .attr("d", symbol.type(function(d){return shapeScale(d)}).size(Math.round(viewportHeight()* 0.22)))
+        .attr("transform", function(d, i) { return "translate(" + (width+25+i%n*(Math.round(viewportWidth()* 0.0002))) + "," + (Math.round(viewportHeight()* 0.01)) +  ")"; })
         .attr("id", function (d) { return divid+"___leg_symbol"+d.replace(/[\. ()+/-]/g, "_");});
 
     // draw legend colored rectangles
     legend.append("rect")
-          .attr("x", width + Math.round($(window).width()* 0.010227))
-          .attr("width", Math.round($(window).width()* 0.010227))
-          .attr("height", Math.round($(window).height()* 0.020833))
+          .attr("x", width + Math.round(viewportWidth()* 0.010227))
+          .attr("width", Math.round(viewportWidth()* 0.010227))
+          .attr("height", Math.round(viewportHeight()* 0.020833))
           .attr("id", function (d) { return divid+"___leg_rect"+d.replace(/[\. ()+/-]/g, "_");})
           .attr("class", "benchmark_legend_rect")
           .style("fill", "transparent")
           .attr("z-index", 3)
-          .on('click', function(d) {
+          .on('click', function(event, d) {
             
             let dot = d3.select("text#" +divid+"___"+d.replace(/[\. ()+/-]/g, "_"));
-            let ID = dot._groups[0][0].id;
+            let ID = dot.node().id;
   
             if(data.length-removed_tools.length-1 >= 4){
   
@@ -53,25 +53,24 @@ export function draw_legend (data, svg, xScale, yScale, div, width, height, remo
   
             } else {
               
-              $('.removal_alert').remove();
-              var alert_msg = $('<div class="removal_alert">\
-                                  <span class="closebtn" onclick="(this.parentNode.remove());">&times;</span>\
-                                  At least four participants are required for the benchmark!!\
-                                </div>');
-              $("#" + divid).append(alert_msg);
-  
+              document.querySelectorAll('.removal_alert').forEach(el => el.remove());
+              var alert_msg = document.createElement("div");
+              alert_msg.className = "removal_alert";
+              alert_msg.innerHTML = '<span class="closebtn">&times;</span>' +
+                                    'At least four participants are required for the benchmark!!';
+              alert_msg.querySelector(".closebtn").addEventListener("click", () => alert_msg.remove());
+              document.getElementById(divid).appendChild(alert_msg);
+
               setTimeout(function(){
-                if ($('.removal_alert').length > 0) {
-                  $('.removal_alert').remove();
-                }
+                alert_msg.remove();
               }, 5000)
   
             };
           })
-          .on("mouseover", function (d) {
+          .on("mouseover", function (event, d) {
   
             let dot = d3.select("text#" +divid+"___"+d.replace(/[\. ()+/-]/g, "_"));
-            let ID = dot._groups[0][0].id;
+            let ID = dot.node().id;
             let tool_id =ID.split("___")[1];
   
             if (d3.select("#"+ID).style("opacity") == 0){
@@ -85,10 +84,10 @@ export function draw_legend (data, svg, xScale, yScale, div, width, height, remo
             };
             
           }) 
-          .on("mouseout", function (d) {
+          .on("mouseout", function (event, d) {
   
             let dot = d3.select("text#" +divid+"___"+d.replace(/[\. ()+/-]/g, "_"));
-            let ID = dot._groups[0][0].id;
+            let ID = dot.node().id;
             let tool_id =ID.split("___")[1];
   
             if (d3.select("#"+ID).style("opacity") == 0){
@@ -104,8 +103,8 @@ export function draw_legend (data, svg, xScale, yScale, div, width, height, remo
   
     // draw legend text
     legend.append("text")
-          .attr("x", width + Math.round($(window).width()* 0.028))
-          .attr("y", Math.round($(window).height()* 0.01041))
+          .attr("x", width + Math.round(viewportWidth()* 0.028))
+          .attr("y", Math.round(viewportHeight()* 0.01041))
           .attr("id", function (d) { return divid+"___"+d.replace(/[\. ()+/-]/g, "_");})
           .attr("dy", ".35em")
           .style("text-anchor", "start")
@@ -149,8 +148,10 @@ function show_or_hide_participant_in_plot (ID, data, svg, xScale, yScale, div, w
      d3.select("#"+divid+"___right"+tool_id).style("opacity", 1);
      d3.select("#"+divid+"___left"+tool_id).style("opacity", 1);
      // recalculate the quartiles after removing the tools
-     let index = $.inArray(tool_id.replace(/_/g, "-"), removed_tools);
-     removed_tools.splice(index, 1);
+     let index = removed_tools.indexOf(tool_id.replace(/_/g, "-"));
+     if (index > -1) {
+       removed_tools.splice(index, 1);
+     }
      compute_classification(data, svg, xScale, yScale, div, width, height, removed_tools,divid,classification_type, legend_color_palette, better[divid]);
      //change the legend opacity to keep track of hidden tools
      d3.select(legend_rect).style("opacity", 1);

@@ -1,3 +1,4 @@
+import * as d3 from "d3";
 import { remove_hidden_tools} from "./remove_tools";
 import { fill_in_table, set_cell_colors } from "./table"
 
@@ -9,8 +10,8 @@ export function get_square_quartiles(data, svg, xScale, yScale, div, removed_too
     let x_values = tools_not_hidden.map(a => a.x).sort(function(a, b){return a - b});
     let y_values = tools_not_hidden.map(a => a.y).sort(function(a, b){return a - b});
   
-    let quantile_x = d3.quantile(x_values, 0.5);
-    let quantile_y = d3.quantile(y_values, 0.5);
+    let quantile_x = d3.quantileSorted(x_values, 0.5);
+    let quantile_y = d3.quantileSorted(y_values, 0.5);
   
     let x_axis = xScale.domain();
     let y_axis = yScale.domain();
@@ -27,15 +28,15 @@ export function get_square_quartiles(data, svg, xScale, yScale, div, removed_too
       .attr("stroke-width",2)
       .style("stroke-dasharray", ("20, 5"))
       .style("opacity", 0.4)
-      .on("mouseover", function(d) {	
+      .on("mouseover", function(event, d) {	
         div.transition()		
            .duration(100)		
            .style("opacity", .9);		
         div.html("X quartile = " + formatComma( quantile_x) )	
-           .style("left", (d3.event.pageX) + "px")		
-           .style("top", (d3.event.pageY) + "px");
+           .style("left", (event.pageX) + "px")		
+           .style("top", (event.pageY) + "px");
       })					
-      .on("mouseout", function(d) {		
+      .on("mouseout", function(event, d) {		
         div.transition()		
            .duration(1000)		
            .style("opacity", 0);	
@@ -51,15 +52,15 @@ export function get_square_quartiles(data, svg, xScale, yScale, div, removed_too
       .attr("stroke-width",2)
       .style("stroke-dasharray", ("20, 5"))
       .style("opacity", 0.4)
-      .on("mouseover", function(d) {	
+      .on("mouseover", function(event, d) {	
         div.transition()		
            .duration(100)		
            .style("opacity", .9);		
         div	.html("Y quartile = " + formatComma(quantile_y) )	
-            .style("left", (d3.event.pageX) + "px")		
-            .style("top", (d3.event.pageY) + "px");
+            .style("left", (event.pageX) + "px")		
+            .style("top", (event.pageY) + "px");
       })					
-      .on("mouseout", function(d) {		
+      .on("mouseout", function(event, d) {		
         div.transition()		
            .duration(1500)		
            .style("opacity", 0);	

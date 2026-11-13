@@ -1,27 +1,26 @@
 {
   "name": "@inb/oeb-chart-scatter",
-  "version": "1.1.4",
+  "version": "2.0.0",
   "description": "benchmarkingChart_scatter",
   "main": "build/build.js",
   "devDependencies": {
-    "apollo-fetch": "^0.7.0",
     "clusters": "0.0.4",
-    "css-loader": "^1.0.0",
-    "d3": "^5.5.0",
-    "d3-polygon": "^1.0.5",
+    "css-loader": "^7.1.2",
+    "d3": "^7.9.0",
     "d3-save-svg": "0.0.2",
-    "html2canvas": "^1.0.0-rc.5",
-    "jquery": "^3.3.1",
-    "jspdf": "^1.5.3",
+    "d3-transition": "^3.0.2",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^4.2.1",
     "license-checker": "^25.0.1",
     "pareto-frontier": "^1.1.1",
-    "style-loader": "^0.21.0",
-    "webpack": "^4.15.1",
-    "webpack-cli": "^3.0.8"
+    "style-loader": "^4.0.0",
+    "terser-webpack-plugin": "^5.6.1",
+    "webpack": "^5.102.0",
+    "webpack-cli": "^7.0.0"
   },
   "scripts": {
-    "prod": "webpack-cli src/app.js --output=build/build.js -p;",
-    "dev": "webpack-cli src/app.js --output=build/build.js -d -w;",
+    "prod": "webpack --mode=production",
+    "dev": "webpack --mode=development --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Javier Garrayo <me.javi@hotmail.com>",
@@ -43,5 +42,8 @@
   "bugs": {
     "url": "https://github.com/inab/OpenEBench_scientific_visualizer/issues"
   },
-  "homepage": "https://github.com/inab/OpenEBench_scientific_visualizer#readme"
+  "homepage": "https://github.com/inab/OpenEBench_scientific_visualizer#readme",
+  "engines": {
+    "node": ">=20"
+  }
 }

@@ -1,3 +1,4 @@
+import * as d3 from "d3";
 import { remove_hidden_tools} from "./remove_tools";
 import { fill_in_table, set_cell_colors } from "./table"
 
@@ -45,9 +46,9 @@ export function get_diagonal_quartiles(data, svg, xScale, yScale, div, width, he
     // sort the scores and compute quartiles
     scores.sort(function(a, b){return b-a});
   
-    let first_quartile = d3.quantile(scores, 0.25);
-    let second_quartile = d3.quantile(scores, 0.5);
-    let third_quartile = d3.quantile(scores, 0.75);
+    let first_quartile = d3.quantileSorted(scores, 0.25);
+    let second_quartile = d3.quantileSorted(scores, 0.5);
+    let third_quartile = d3.quantileSorted(scores, 0.75);
   
     // compute the diagonal line coords
     let coords = [get_diagonal_line(scores, scores_coords, first_quartile, better, max_x, max_y,svg, xScale, yScale), 
